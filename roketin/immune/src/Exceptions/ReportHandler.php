@@ -65,9 +65,10 @@ class ReportHandler extends ExceptionHandler
     {
         $this->client = new GuzzleHttp\Client();
         try{
-            $token = $this->client->get(config('lumenReportExceptions.sendReport.API_Url').'login');
+            $getToken = $this->client->get(config('lumenReportExceptions.sendReport.API_Url').'login');
+            $token = $getToken->getBody()->getContents();
             $data = $this->client->post(config('lumenReportExceptions.sendReport.API_Url').'reports',
-            ['form_params'=>['token'=>$token, 'env'=>env('APP_ENV','unknown'), 'req_payload'=>$request->getContent(),'app_url'=>env('APP_URL','unknown'),'full_url'=>$request->fullUrl(),'exc_class'=>get_class($exception),'exc_msg'=>$exception->getMessage(),'exc_code'=>$exception->getCode(),'exc_file'=>$exception->getFile(),'exc_line'=>$exception->getLine(),'stack_trace'=>$exception->getTraceAsString()]]);
+            ['form_params'=>['token'=>$token,'env'=>env('APP_ENV','unknown'), 'req_payload'=>$request->getContent(),'app_url'=>env('APP_URL','unknown'),'full_url'=>$request->fullUrl(),'exc_class'=>get_class($exception),'exc_msg'=>$exception->getMessage(),'exc_code'=>$exception->getCode(),'exc_file'=>$exception->getFile(),'exc_line'=>$exception->getLine(),'stack_trace'=>$exception->getTraceAsString()]]);
         }catch(GuzzleHttp\Exception\RequestException $e){
               return json_decode($e->getMessage());
         }
