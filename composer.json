@@ -8,7 +8,19 @@
         {
             "name": "danielsugianto",
             "email": "daniel_sugianto@yahoo.com",
-            "company": "Roketin",
+            "company": "Roketin"
         }
     ],
+    "autoload": {
+        "psr-4": {
+            "Roketin\\Immune\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Roketin\\Immune\\ReportExceptionsServiceProvider"
+            ]
+        }
+    }
 }

@@ -1,6 +1,8 @@
 <?php
 namespace Roketin\LumenReportExceptions;
+
 use Illuminate\Support\ServiceProvider;
+
 class ReportExceptionsServiceProvider extends ServiceProvider
 {
     /**
