@@ -20,10 +20,10 @@ class ReportHandler extends ExceptionHandler
      * @var array
      */
     protected $dontReport = [
-        AuthorizationException::class,
-        HttpException::class,
-        ModelNotFoundException::class,
-        ValidationException::class,
+        // AuthorizationException::class,
+        // HttpException::class,
+        // ModelNotFoundException::class,
+        // ValidationException::class,
     ];
 
     /**
@@ -65,9 +65,9 @@ class ReportHandler extends ExceptionHandler
     {
         $this->client = new GuzzleHttp\Client();
         try{
-            $data = $this->client->post(config('lumenEmailExceptions.sendReport.API_Url'),
-            ['form_params'=>['env'=>env('APP_ENV','unknown'), 'req_payload'=>$request->getContent(),'app_url'=>env('APP_URL','unknown'),
-            'full_url'=>$request->fullUrl(),'exc_class'=>get_class($exception),'exc_msg'=>$exception->getMessage(),'exc_code'=>$exception->getCode(),'exc_file'=>$exception->getFile(),'exc_line'=>$exception->getLine(),'stack_trace'=>$exception->getTraceAsString()]]);
+            $token = $this->client->get(config('lumenReportExceptions.sendReport.API_Url').'login');
+            $data = $this->client->post(config('lumenReportExceptions.sendReport.API_Url').'reports',
+            ['form_params'=>['token'=>$token, 'env'=>env('APP_ENV','unknown'), 'req_payload'=>$request->getContent(),'app_url'=>env('APP_URL','unknown'),'full_url'=>$request->fullUrl(),'exc_class'=>get_class($exception),'exc_msg'=>$exception->getMessage(),'exc_code'=>$exception->getCode(),'exc_file'=>$exception->getFile(),'exc_line'=>$exception->getLine(),'stack_trace'=>$exception->getTraceAsString()]]);
         }catch(GuzzleHttp\Exception\RequestException $e){
               return json_decode($e->getMessage());
         }
