@@ -11,6 +11,7 @@
             "company": "Roketin"
         }
     ],
+    "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
             "Roketin\\Immune\\": "src/"
