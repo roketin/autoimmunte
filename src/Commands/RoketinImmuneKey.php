@@ -43,6 +43,13 @@ class RoketinImmuneKey extends Command
         for ($i = 0; $i < $charactersLength; $i++) {
             $randomString .= $characters[rand(0, $charactersLength - 1)];
         }
+        $path = base_path('.env');
+        if (file_exists($path)) {
+            file_put_contents(
+                $path,
+                str_replace(env('IMMUNE_KEY'), $randomString, file_get_contents($path))
+            );
+        }
         $this->info('Generated: '. $randomString);
     }
 }

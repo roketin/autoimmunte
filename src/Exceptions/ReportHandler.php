@@ -35,7 +35,7 @@ class ReportHandler extends ExceptionHandler
      */
     public function report(Exception $exception)
     {
-        // $this->sendException($exception);        #saya jalanin ini karena function render yang bawah ga jalan
+        // $this->sendException($exception);
         parent::report($exception);
     }
 
@@ -64,10 +64,6 @@ class ReportHandler extends ExceptionHandler
     {
         $this->client = new GuzzleHttp\Client();
         try{
-            // token saya ubah jadi IMMUNE_KEY cara generate nya di command: php artisan r-immune-key:generate
-            // terus coba kamu taruh IMMUNE_KEY nya di .env saya blm bikin pas generate langsung otomatis di ada di .env
-            // kalo kamu bisa bikinya minta tolong bikinin ya wkwk..
-
             // $getToken = $this->client->get(config('lumenReportExceptions.sendReport.API_Url').'login');
             // $token = $getToken->getBody()->getContents();
             $data = $this->client->post(config('lumenReportExceptions.sendReport.API_Url').'reports',
@@ -88,7 +84,7 @@ class ReportHandler extends ExceptionHandler
                                   ]
                 ]
             );
-            // dd($data->getBody()->getContents());
+            dd($data->getBody()->getContents());
         } catch(GuzzleHttp\Exception\RequestException $e){
               return json_decode($e->getMessage());
         }
