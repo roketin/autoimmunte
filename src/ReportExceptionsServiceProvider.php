@@ -1,5 +1,5 @@
 <?php
-namespace Roketin\LumenReportExceptions;
+namespace Roketin\Immune;
 
 use Illuminate\Support\ServiceProvider;
 
@@ -18,8 +18,12 @@ class ReportExceptionsServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        $this->commands([
+            \Roketin\Immune\Commands\RoketinImmuneKey::class,
+        ]);
+
         $this->publishes([
-            __DIR__.'/config/lumenReportExceptions.php' => config_path('lumenReportExceptions.php'),
+            __DIR__.'/config/lumenReportExceptions.php' => resource_path('lumenReportExceptions.php'),
         ], 'config');
     }
     /**

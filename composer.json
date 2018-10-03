@@ -1,9 +1,8 @@
 {
     "name": "roketin/immune",
     "description": "package to report exceptions for lumen framework by Roketin",
-    "require": {
-        "guzzlehttp/guzzle": "^6.3"
-    },
+    "type": "library",
+    "license": "MIT",
     "authors": [
         {
             "name": "danielsugianto",
@@ -12,6 +11,7 @@
         }
     ],
     "minimum-stability": "dev",
+    "require": {},
     "autoload": {
         "psr-4": {
             "Roketin\\Immune\\": "src/"
