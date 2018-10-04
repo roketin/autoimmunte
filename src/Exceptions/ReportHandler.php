@@ -1,9 +1,9 @@
 <?php
 
-namespace Roketin\Immune\Exceptions;
+namespace Beykun\Immune\Exceptions;
 
 use Exception;
-
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -25,7 +25,6 @@ class ReportHandler extends ExceptionHandler
         // ModelNotFoundException::class,
         // ValidationException::class,
     ];
-
     /**
      * Report or log an exception.
      *
@@ -36,7 +35,7 @@ class ReportHandler extends ExceptionHandler
      */
     public function report(Exception $exception)
     {
-        
+        $this->sendException($exception, NULL);
         parent::report($exception);
     }
 
@@ -50,7 +49,7 @@ class ReportHandler extends ExceptionHandler
     public function render($request, Exception $exception)
     {   
         if ($this->shouldReport($exception)){
-            $this->sendException($exception,$request);
+            $this->sendException($exception, $request);
         }
         return parent::render($request, $exception);
     }
@@ -61,16 +60,28 @@ class ReportHandler extends ExceptionHandler
      * @param Exception                $exception
      * @param \Illuminate\Http\Request $request
      */
-    protected function sendException(Exception $exception,$request)
+    protected function sendException(Exception $exception, $request)
     {
         $this->client = new GuzzleHttp\Client();
         try{
-            $getToken = $this->client->get(config('lumenReportExceptions.sendReport.API_Url').'login');
-            $token = $getToken->getBody()->getContents();
             $data = $this->client->post(config('lumenReportExceptions.sendReport.API_Url').'reports',
-            ['form_params'=>['token'=>$token,'env'=>env('APP_ENV','unknown'), 'req_payload'=>$request->getContent(),'app_url'=>env('APP_URL','unknown'),'full_url'=>$request->fullUrl(),'exc_class'=>get_class($exception),'exc_msg'=>$exception->getMessage(),'exc_code'=>$exception->getCode(),'exc_file'=>$exception->getFile(),'exc_line'=>$exception->getLine(),'stack_trace'=>$exception->getTraceAsString()]]);
-        }catch(GuzzleHttp\Exception\RequestException $e){
+                ['form_params' => [
+                                   'env'        => env('APP_ENV','unknown'),
+                                   'client_key' => env('IMMUNE_KEY'),
+                                   'req_payload'=> ($request != null) ? $request->getContent() : 'unknow',
+                                   'app_url'    => env('APP_URL','unknown'),
+                                   'full_url'   => ($request != null) ? $request->fullUrl() : 'unknow',
+                                   'exc_class'  => get_class($exception),
+                                   'exc_msg'    => $exception->getMessage(),
+                                   'exc_code'   => $exception->getCode(),
+                                   'exc_file'   => $exception->getFile(),
+                                   'exc_line'   => $exception->getLine(),
+                                   'stack_trace'=> $exception->getTraceAsString()
+                                  ]
+                ]
+            );
+        } catch(GuzzleHttp\Exception\RequestException $e){
               return json_decode($e->getMessage());
         }
-    }      
+    }
 }
