@@ -35,7 +35,7 @@ class ReportHandler extends ExceptionHandler
      */
     public function report(Exception $exception)
     {
-        $this->sendExceptionReport($exception, NULL);
+        $this->sendException($exception, NULL);
         parent::report($exception);
     }
 
@@ -49,7 +49,7 @@ class ReportHandler extends ExceptionHandler
     public function render($request, Exception $exception)
     {   
         if ($this->shouldReport($exception)){
-            $this->sendExceptionRender($exception, $request);
+            $this->sendException($exception, $request);
         }
         return parent::render($request, $exception);
     }
