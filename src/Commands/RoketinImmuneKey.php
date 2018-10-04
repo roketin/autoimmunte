@@ -1,10 +1,6 @@
 <?php
 
-<<<<<<< HEAD
-namespace Beykun\Immune\Commands;
-=======
 namespace Roketin\Immune\Commands;
->>>>>>> 14a9907ae7136f444f9ce8612756f13065202f37
 
 use Illuminate\Console\Command;
 
@@ -15,7 +11,7 @@ class RoketinImmuneKey extends Command
      *
      * @var string
      */
-    protected $signature = 'r-immune-key:generate';
+    protected $signature = 'immune-key:generate';
 
     /**
      * The console command description.
