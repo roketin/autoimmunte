@@ -64,7 +64,7 @@ class ReportHandler extends ExceptionHandler
     {
         $this->client = new GuzzleHttp\Client();
         try{
-            $login= $this->client->post(config('lumenReportExceptions.sendReport.API_Url').'client'
+            $login= $this->client->post(config('lumenReportExceptions.sendReport.API_Url').'client',
                 ['form_params' =>[
                                   'key'         => env('IMMUNE_KEY')
                                  ]
