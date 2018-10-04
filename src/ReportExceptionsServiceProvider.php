@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 namespace Beykun\Immune;
+=======
+namespace Roketin\Immune;
+>>>>>>> 14a9907ae7136f444f9ce8612756f13065202f37
 
 use Illuminate\Support\ServiceProvider;
 
@@ -19,7 +23,11 @@ class ReportExceptionsServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->commands([
+<<<<<<< HEAD
             \Beykun\Immune\Commands\RoketinImmuneKey::class,
+=======
+            \Roketin\Immune\Commands\RoketinImmuneKey::class,
+>>>>>>> 14a9907ae7136f444f9ce8612756f13065202f37
         ]);
 
         $this->publishes([

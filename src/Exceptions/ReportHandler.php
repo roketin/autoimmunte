@@ -35,7 +35,11 @@ class ReportHandler extends ExceptionHandler
      */
     public function report(Exception $exception)
     {
+<<<<<<< HEAD
         $this->sendException($exception, NULL);
+=======
+        $this->sendExceptionReport($exception);
+>>>>>>> 14a9907ae7136f444f9ce8612756f13065202f37
         parent::report($exception);
     }
 
@@ -49,7 +53,11 @@ class ReportHandler extends ExceptionHandler
     public function render($request, Exception $exception)
     {   
         if ($this->shouldReport($exception)){
+<<<<<<< HEAD
             $this->sendException($exception, $request);
+=======
+            $this->sendExceptionRender($exception, $request);
+>>>>>>> 14a9907ae7136f444f9ce8612756f13065202f37
         }
         return parent::render($request, $exception);
     }
@@ -60,17 +68,23 @@ class ReportHandler extends ExceptionHandler
      * @param Exception                $exception
      * @param \Illuminate\Http\Request $request
      */
+<<<<<<< HEAD
     protected function sendException(Exception $exception, $request)
+=======
+    protected function sendExceptionRender(Exception $exception, $request)
     {
         $this->client = new GuzzleHttp\Client();
         try{
+            // $getToken = $this->client->get(config('lumenReportExceptions.sendReport.API_Url').'login');
+            // $token = $getToken->getBody()->getContents();
             $data = $this->client->post(config('lumenReportExceptions.sendReport.API_Url').'reports',
                 ['form_params' => [
+                                //    'token'      => $token,
                                    'env'        => env('APP_ENV','unknown'),
                                    'client_key' => env('IMMUNE_KEY'),
-                                   'req_payload'=> ($request != null) ? $request->getContent() : 'unknow',
-                                   'app_url'    => env('APP_URL','unknown'),
-                                   'full_url'   => ($request != null) ? $request->fullUrl() : 'unknow',
+                                   'req_payload'=> $request->getContent(),
+                                   'app_url'    => env('IMMUNE_URL','unknown'),
+                                   'full_url'   => $request->fullUrl(),
                                    'exc_class'  => get_class($exception),
                                    'exc_msg'    => $exception->getMessage(),
                                    'exc_code'   => $exception->getCode(),
@@ -80,8 +94,48 @@ class ReportHandler extends ExceptionHandler
                                   ]
                 ]
             );
+            dd($data->getBody()->getContents());
         } catch(GuzzleHttp\Exception\RequestException $e){
               return json_decode($e->getMessage());
         }
     }
+    
+    protected function sendExceptionReport(Exception $exception)
+>>>>>>> 14a9907ae7136f444f9ce8612756f13065202f37
+    {
+        $this->client = new GuzzleHttp\Client();
+        try{
+            $data = $this->client->post(config('lumenReportExceptions.sendReport.API_Url').'reports',
+                ['form_params' => [
+                                   'env'        => env('APP_ENV','unknown'),
+                                   'client_key' => env('IMMUNE_KEY'),
+<<<<<<< HEAD
+                                   'req_payload'=> ($request != null) ? $request->getContent() : 'unknow',
+                                   'app_url'    => env('APP_URL','unknown'),
+                                   'full_url'   => ($request != null) ? $request->fullUrl() : 'unknow',
+=======
+                                   'app_url'    => env('IMMUNE_URL','unknown'),
+                                   'full_url'   => 'unknow',
+>>>>>>> 14a9907ae7136f444f9ce8612756f13065202f37
+                                   'exc_class'  => get_class($exception),
+                                   'exc_msg'    => $exception->getMessage(),
+                                   'exc_code'   => $exception->getCode(),
+                                   'exc_file'   => $exception->getFile(),
+                                   'exc_line'   => $exception->getLine(),
+                                   'stack_trace'=> $exception->getTraceAsString()
+                                  ]
+                ]
+            );
+<<<<<<< HEAD
+        } catch(GuzzleHttp\Exception\RequestException $e){
+              return json_decode($e->getMessage());
+        }
+    }
+=======
+            dd($data->getBody()->getContents());
+        } catch(GuzzleHttp\Exception\RequestException $e){
+              return json_decode($e->getMessage());
+        }
+    } 
+>>>>>>> 14a9907ae7136f444f9ce8612756f13065202f37
 }

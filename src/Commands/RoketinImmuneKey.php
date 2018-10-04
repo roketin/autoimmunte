@@ -1,6 +1,10 @@
 <?php
 
+<<<<<<< HEAD
 namespace Beykun\Immune\Commands;
+=======
+namespace Roketin\Immune\Commands;
+>>>>>>> 14a9907ae7136f444f9ce8612756f13065202f37
 
 use Illuminate\Console\Command;
 
