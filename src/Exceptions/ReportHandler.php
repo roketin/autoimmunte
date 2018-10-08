@@ -20,10 +20,10 @@ class ReportHandler extends ExceptionHandler
      * @var array
      */
     protected $dontReport = [
-        // AuthorizationException::class,
-        // HttpException::class,
-        // ModelNotFoundException::class,
-        // ValidationException::class,
+        AuthorizationException::class,
+        HttpException::class,
+        ModelNotFoundException::class,
+        ValidationException::class,
     ];
     /**
      * Report or log an exception.
@@ -35,7 +35,9 @@ class ReportHandler extends ExceptionHandler
      */
     public function report(Exception $exception)
     {
-        $this->sendException($exception, NULL);
+        if($this->shouldReport($exception)){
+            $this->sendException($exception);
+        }
         parent::report($exception);
     }
 
@@ -49,7 +51,7 @@ class ReportHandler extends ExceptionHandler
     public function render($request, Exception $exception)
     {   
         if ($this->shouldReport($exception)){
-            $this->sendException($exception, $request);
+            $this->updateException($exception, $request);
         }
         return parent::render($request, $exception);
     }
@@ -58,9 +60,8 @@ class ReportHandler extends ExceptionHandler
      * send the exception to database
      *
      * @param Exception                $exception
-     * @param \Illuminate\Http\Request $request
      */
-    protected function sendException(Exception $exception, $request)
+    protected function sendException(Exception $exception)
     {
         $this->client = new GuzzleHttp\Client();
         try{
@@ -74,17 +75,47 @@ class ReportHandler extends ExceptionHandler
                 ['form_params' => [
                                    'env'        => env('APP_ENV','unknown'),
                                    'client_key' => env('IMMUNE_KEY'),
-                                   'req_payload'=> ($request != null) ? $request->getContent() : 'unknow',
+                                   'req_payload'=> 'unknow',
                                    'app_url'    => env('APP_URL','unknown'),
-                                   'full_url'   => ($request != null) ? $request->fullUrl() : 'unknow',
+                                   'full_url'   => 'unknow',
                                    'exc_class'  => get_class($exception),
                                    'exc_msg'    => $exception->getMessage(),
                                    'exc_code'   => $exception->getCode(),
                                    'exc_file'   => $exception->getFile(),
                                    'exc_line'   => $exception->getLine(),
-                                   'stack_trace'=> $exception->getTraceAsString()
+                                   'stack_trace'=> $exception->getTraceAsString(),
                                   ]
                 ]
+            );
+        } catch(GuzzleHttp\Exception\RequestException $e){
+              return json_decode($e->getMessage());
+        }
+    }
+    /**
+     * update the reportedException to database
+     *
+     * @param Exception                $exception
+     * @param \Illuminate\Http\Request $request
+     */
+    protected function updateException(Exception $exception, $request)
+    {
+        $this->client = new GuzzleHttp\Client();
+        try{
+            $data = $this->client->post(config('lumenReportExceptions.sendReport.API_Url').'reports/update',
+                ['form_params' => [
+                                   'env'        => env('APP_ENV','unknown'),
+                                   'client_key' => env('IMMUNE_KEY'), 
+                                   'req_payload'=> $request->getContent(),
+                                   'app_url'    => env('APP_URL','unknown'),
+                                   'full_url'   => $request->fullUrl(),
+                                   'exc_class'  => get_class($exception),
+                                   'exc_msg'    => $exception->getMessage(),
+                                   'exc_code'   => $exception->getCode(),
+                                   'exc_file'   => $exception->getFile(),
+                                   'exc_line'   => $exception->getLine(),
+                                   'stack_trace'=> $exception->getTraceAsString(),
+                                  ]
+                ]   
             );
         } catch(GuzzleHttp\Exception\RequestException $e){
               return json_decode($e->getMessage());
